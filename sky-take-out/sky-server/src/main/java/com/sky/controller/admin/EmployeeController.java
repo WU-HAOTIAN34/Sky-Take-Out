@@ -3,8 +3,10 @@ package com.sky.controller.admin;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -12,11 +14,9 @@ import com.sky.vo.EmployeeLoginVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,11 +75,32 @@ public class EmployeeController {
     }
 
 
-    @PostMapping("/save")
+    @PostMapping("")
     @ApiOperation("/save")
-    public Result<Employee> save(@RequestBody EmployeeDTO employeeDTO){
+    public Result<Employee> save(@RequestBody EmployeeDTO employeeDTO, HttpServletRequest request){
         log.info("员工创建：{}", employeeDTO);
-        Employee employee = employeeService.save(employeeDTO);
+        Map<String, Object> claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(),
+                request.getHeader("token"));
+        long id = Long.parseLong(claims.get(JwtClaimsConstant.EMP_ID).toString());
+        Employee employee = employeeService.save(employeeDTO, id);
         return Result.success(employee);
+    }
+
+
+    @GetMapping("/page")
+    @ApiOperation("/query")
+    public Result<PageResult> query(EmployeePageQueryDTO employeePageQueryDTO){
+        log.info("员工查询：{}", employeePageQueryDTO);
+        PageResult pageResult = employeeService.query(employeePageQueryDTO);
+        return Result.success(pageResult);
+    }
+
+    @PostMapping("/status/{status}")
+    @ApiOperation("/status")
+    public Result modifyStatus(@PathVariable Integer status, Long id){
+        //employeeService.modifyStatus(status, id);
+
+
+        return Result.success();
     }
 }
