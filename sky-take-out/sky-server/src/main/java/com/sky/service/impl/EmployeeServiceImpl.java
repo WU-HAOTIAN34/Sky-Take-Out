@@ -120,4 +120,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeMapper.modifyEmployee(employee);
 
     }
+
+    public void editEmployee(EmployeeDTO employeeDTO){
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+        employee.setUpdateUser(BaseContext.getCurrentId());
+        employee.setUpdateTime(LocalDateTime.now());
+        employeeMapper.modifyEmployee(employee);
+    }
 }

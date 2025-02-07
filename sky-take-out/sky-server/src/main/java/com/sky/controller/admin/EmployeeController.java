@@ -98,9 +98,16 @@ public class EmployeeController {
     @PostMapping("/status/{status}")
     @ApiOperation("/status")
     public Result modifyStatus(@PathVariable Integer status, Long id){
-        //employeeService.modifyStatus(status, id);
-
-
+        employeeService.modifyStatus(status, id);
         return Result.success();
     }
+
+
+    @PostMapping("/edit")
+    @ApiOperation("/edit")
+    public Result editEmployee(@RequestBody EmployeeDTO employeeDTO){
+        employeeService.editEmployee(employeeDTO);
+        return Result.success();
+    }
+
 }
