@@ -18,7 +18,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+
+
 
 /**
  * 员工管理
@@ -102,12 +106,31 @@ public class EmployeeController {
         return Result.success();
     }
 
-
+/**
     @PostMapping("/edit")
     @ApiOperation("/edit")
     public Result editEmployee(@RequestBody EmployeeDTO employeeDTO){
         employeeService.editEmployee(employeeDTO);
         return Result.success();
+    }**/
+
+
+    @GetMapping("/{id}")
+    @ApiOperation("/queryEmployeeById")
+    public Result<Employee> queryEmployeeById(@PathVariable Integer id){
+
+        Employee employee = employeeService.queryEmployeeById(id);
+        return Result.success(employee);
     }
+
+
+    @PutMapping("")
+    @ApiOperation("edit")
+    public Result editEmployee(@RequestBody EmployeeDTO employeeDTO){
+
+        employeeService.editEmployee(employeeDTO);
+        return Result.success();
+    }
+
 
 }

@@ -44,4 +44,7 @@ public interface EmployeeMapper {
     void modifyStatus(Integer status, Long id);
 
     void modifyEmployee(Employee employee);
+
+    @Select("select * from employee where id = #{id}")
+    Employee queryEmployeeById(Integer id);
 }

@@ -38,5 +38,15 @@ public interface EmployeeService {
      */
     void modifyStatus(Integer status, Long id);
 
+    /**
+     *
+     * @param id
+     * @return
+     */
+    Employee queryEmployeeById(Integer id);
+    /**
+     *
+     * @param employeeDTO
+     */
     void editEmployee(EmployeeDTO employeeDTO);
 }

@@ -128,4 +128,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setUpdateTime(LocalDateTime.now());
         employeeMapper.modifyEmployee(employee);
     }
+
+
+    public Employee queryEmployeeById(Integer id) {
+        Employee employee = employeeMapper.queryEmployeeById(id);
+        employee.setPassword("****");
+        return employee;
+    }
 }
