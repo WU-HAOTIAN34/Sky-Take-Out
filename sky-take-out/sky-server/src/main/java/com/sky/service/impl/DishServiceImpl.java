@@ -106,4 +106,11 @@ public class DishServiceImpl implements DishService {
         dish.setStatus(status);
         dishMapper.edit(dish);
     }
+
+    public List<DishVO> queryByCategory(Long id){
+        List<DishVO> list = dishMapper.queryByCategoryId(id);
+        return list;
+    }
+
+
 }

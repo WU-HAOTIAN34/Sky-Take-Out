@@ -26,7 +26,6 @@ public interface DishMapper {
     @Select("select status from dish where id = #{id}")
     Integer queryStatusById(Long id);
 
-
     void delete(List<Long> ids);
 
     @Select("select d.*, c.name as categoryName from dish d left join category c on d.category_id = c.id where d.id = #{id}")
@@ -34,4 +33,7 @@ public interface DishMapper {
 
     @AutoFill(value = OperationType.UPDATE)
     void edit(Dish dish);
+
+    @Select("select * from dish where category_id = #{id} and status = 1")
+    List<DishVO> queryByCategoryId(Long id);
 }

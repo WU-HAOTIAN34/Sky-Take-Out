@@ -23,4 +23,6 @@ public interface DishService {
 
     void modifyStatus(Integer status, Long id);
 
+    List<DishVO> queryByCategory(Long id);
+
 }

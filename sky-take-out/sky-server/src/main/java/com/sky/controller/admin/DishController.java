@@ -74,4 +74,12 @@ public class DishController {
         return Result.success();
     }
 
+    @GetMapping("/list")
+    @ApiOperation("list")
+    public Result<List<DishVO>> queryByCategoryId(Long categoryId){
+        log.info("展示分类菜品：{}", categoryId);
+        List<DishVO> list = dishService.queryByCategory(categoryId);
+        return Result.success(list);
+    }
+
 }
