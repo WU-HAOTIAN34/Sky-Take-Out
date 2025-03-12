@@ -14,6 +14,7 @@ import com.sky.mapper.SetMealDishMapper;
 import com.sky.mapper.SetMealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetMealService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,7 @@ public class SetMealServiceImpl implements SetMealService {
 
     public PageResult query(SetmealPageQueryDTO setmealPageQueryDTO){
         PageHelper.startPage(setmealPageQueryDTO.getPage(), setmealPageQueryDTO.getPageSize());
-        Page<Setmeal> page =  setMealMapper.query(setmealPageQueryDTO);
+        Page<SetmealVO> page =  setMealMapper.query(setmealPageQueryDTO);
         return new PageResult(page.getTotal(), page.getResult());
     }
 
@@ -111,6 +112,21 @@ public class SetMealServiceImpl implements SetMealService {
         setmeal.setStatus(status);
         setmeal.setId(id);
         setMealMapper.edit(setmeal);
+    }
+
+    public List<SetmealVO> queryByCategoryId(Long categoryId){
+        SetmealPageQueryDTO setmealPageQueryDTO = new SetmealPageQueryDTO();
+        setmealPageQueryDTO.setCategoryId(categoryId);
+        setmealPageQueryDTO.setStatus(StatusConstant.ENABLE);
+        PageHelper.startPage(1, setMealMapper.countByCategoryId(categoryId));
+        Page<SetmealVO> page =  setMealMapper.query(setmealPageQueryDTO);
+        List<SetmealVO> result = page.getResult();
+        return  result;
+
+    }
+
+    public List<DishItemVO> queryDishBySetMealId(Long setMealId){
+        return setMealMapper.getDishItemBySetmealId(setMealId);
     }
 
 }

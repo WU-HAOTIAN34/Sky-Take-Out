@@ -112,5 +112,14 @@ public class DishServiceImpl implements DishService {
         return list;
     }
 
+    public List<DishVO> queryByCategoryWithFlavor(Long categoryId){
+        List<DishVO> list = queryByCategory(categoryId);
+        for (DishVO d : list){
+            List<DishFlavor> flavors = dishFlavorMapper.queryByDishId(d.getId());
+            d.setFlavors(flavors);
+        }
+        return list;
+    }
+
 
 }

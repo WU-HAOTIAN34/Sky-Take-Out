@@ -34,6 +34,6 @@ public interface DishMapper {
     @AutoFill(value = OperationType.UPDATE)
     void edit(Dish dish);
 
-    @Select("select * from dish where category_id = #{id} and status = 1")
+    @Select("select d.*, c.name as categoryName from dish d left join category c on d.category_id = c.id where d.category_id = #{id} and d.status = 1")
     List<DishVO> queryByCategoryId(Long id);
 }
