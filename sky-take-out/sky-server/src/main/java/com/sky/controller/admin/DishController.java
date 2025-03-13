@@ -8,6 +8,7 @@ import com.sky.vo.DishVO;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
@@ -35,6 +36,7 @@ public class DishController {
 
     @PostMapping("")
     @ApiOperation("save")
+    @CacheEvict(cacheNames = "dish", key = "#dishDTO.categoryId")
     public Result save(@RequestBody DishDTO dishDTO){
         log.info("新增菜品：{}", dishDTO);
         dishService.save(dishDTO);
@@ -43,6 +45,7 @@ public class DishController {
 
     @DeleteMapping("")
     @ApiOperation("delete")
+    @CacheEvict(cacheNames = "dish", allEntries = true)
     public Result delete(@RequestParam List<Long> ids){
         log.info("删除从菜品：{}", ids);
         dishService.delete(ids);
@@ -51,6 +54,7 @@ public class DishController {
 
     @PutMapping("")
     @ApiOperation("edit")
+    @CacheEvict(cacheNames = "dish", allEntries = true)
     public Result edit(@RequestBody DishDTO dishDTO){
         log.info("修改菜品: {}", dishDTO);
         dishService.edit(dishDTO);
@@ -68,6 +72,7 @@ public class DishController {
 
     @PostMapping("/status/{status}")
     @ApiOperation("status")
+    @CacheEvict(cacheNames = "dish", allEntries = true)
     public Result modifyStatus(@PathVariable Integer status, Long id){
         log.info("启用禁用：{}", id);
         dishService.modifyStatus(status, id);

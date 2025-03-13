@@ -2,8 +2,10 @@ package com.sky.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.constant.MessageConstant;
 import com.sky.dto.UserLoginDTO;
 import com.sky.entity.User;
+import com.sky.exception.LoginFailedException;
 import com.sky.interceptor.JwtTokenAdminInterceptor;
 import com.sky.mapper.UserMapper;
 import com.sky.properties.JwtProperties;
@@ -45,6 +47,10 @@ public class UserServiceImp implements UserService {
         JSONObject jsonObject = JSON.parseObject(s);
 
         String openid = (String)jsonObject.get("openid");
+        if (openid==null){
+            throw new LoginFailedException(MessageConstant.LOGIN_FAILED);
+        }
+
         User user = userMapper.queryByOpenId(openid);
 
         if (user==null){
