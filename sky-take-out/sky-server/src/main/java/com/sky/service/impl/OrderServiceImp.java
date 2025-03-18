@@ -1,4 +1,5 @@
 package com.sky.service.impl;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ser.Serializers;
 import com.github.pagehelper.Page;
@@ -18,6 +19,7 @@ import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import com.sky.vo.OrderVO;
+import com.sky.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 
@@ -50,6 +54,9 @@ public class OrderServiceImp implements OrderService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private WebSocketServer webSocketServer;
 
 
     @Transactional
@@ -99,6 +106,12 @@ public class OrderServiceImp implements OrderService {
         orderSubmitVO.setOrderTime(orders.getOrderTime());
         orderSubmitVO.setOrderNumber(orders.getNumber());
         orderSubmitVO.setOrderAmount(orders.getAmount());
+
+        Map map = new HashMap<>();
+        map.put("type", 1);
+        map.put("orderId", String.valueOf(orders.getId()));
+        map.put("content", "订单号:" + orders.getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
 
         return orderSubmitVO;
     }
@@ -267,6 +280,15 @@ public class OrderServiceImp implements OrderService {
         orders.setStatus(Orders.COMPLETED);
         orders.setDeliveryTime(LocalDateTime.now());
         orderMapper.update(orders);
+    }
+
+    public void remainderOrder(Long id){
+        List<Orders> orders = orderMapper.queryById(id);
+        Map map = new HashMap<>();
+        map.put("type", 2);
+        map.put("orderId", id);
+        map.put("content", "订单号："+orders.get(0).getNumber());
+        webSocketServer.sendToAllClient(JSON.toJSONString(map));
     }
 
 }
