@@ -2,14 +2,18 @@ package com.sky.service.impl;
 import com.sky.entity.OrderDetail;
 import com.sky.mapper.ReportMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.vo.*;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -131,5 +135,84 @@ public class ReportServiceImp implements ReportService {
 
         return salesTop10ReportVO;
 
+    }
+
+
+    public void export(HttpServletResponse httpServletResponse){
+
+        LocalDate now = LocalDate.now();
+        LocalDateTime db = LocalDateTime.of(now.minusDays(30), LocalTime.MIN);
+        LocalDateTime de = LocalDateTime.of(now.minusDays(1), LocalTime.MAX);
+
+        BigDecimal turnover = reportMapper.querySumAmountByDate(db, de);
+        Integer order = reportMapper.queryCountCompleteOrder(db, de);
+        Integer user = reportMapper.queryCountUser(db, de);
+        Integer tOrder = reportMapper.queryCountOrder(db, de);
+
+        double t = turnover==null ? 0.0 : turnover.doubleValue();
+        int o = order==null ? 0 : order;
+        int u = user==null ? 0 : user;
+        double r = tOrder==null ? 1 : (double)o/(double)tOrder;
+        double at = o==0 ? 0.0 : t/(double)o;
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("excel/template.xlsx");
+        try {
+            XSSFWorkbook sheets = new XSSFWorkbook(resourceAsStream);
+            XSSFSheet sheet = sheets.getSheet("Sheet1");
+            XSSFRow row = sheet.getRow(1);
+
+            row.getCell(1).setCellValue("时间："+db+" 到 "+de);
+
+            row = sheet.getRow(3);
+
+            row.getCell(2).setCellValue(t+"");
+            row.getCell(4).setCellValue((r*100)+"%");
+            row.getCell(6).setCellValue(u+"");
+
+            row = sheet.getRow(4);
+
+            row.getCell(2).setCellValue(o+"");
+            row.getCell(4).setCellValue(at+"");
+
+
+            for (int i=0; i<30; i++){
+                db = LocalDateTime.of(now.minusDays(1+i), LocalTime.MIN);
+                de = LocalDateTime.of(now.minusDays(1+i), LocalTime.MAX);
+
+                turnover = reportMapper.querySumAmountByDate(db, de);
+                order = reportMapper.queryCountCompleteOrder(db, de);
+                user = reportMapper.queryCountUser(db, de);
+                tOrder = reportMapper.queryCountOrder(db, de);
+
+                t = turnover==null ? 0.0 : turnover.doubleValue();
+                o = order==null ? 0 : order;
+                u = user==null ? 0 : user;
+
+                r = tOrder==null ? 1 :  (double)o/(double)tOrder;
+                at = o==0 ? 0.0 : t/(double)o;
+
+                row = sheet.getRow(7+i);
+
+                row.getCell(1).setCellValue(now.minusDays(1+i)+"");
+                row.getCell(2).setCellValue(t+"");
+                row.getCell(3).setCellValue(o+"");
+                row.getCell(4).setCellValue((r*100)+"%");
+                row.getCell(5).setCellValue(at+"");
+                row.getCell(6).setCellValue(u+"");
+
+            }
+            ServletOutputStream outputStream = httpServletResponse.getOutputStream();
+            sheets.write(outputStream);
+
+            sheets.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            resourceAsStream.close();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

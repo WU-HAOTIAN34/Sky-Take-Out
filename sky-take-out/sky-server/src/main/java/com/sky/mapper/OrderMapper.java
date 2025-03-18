@@ -7,6 +7,7 @@ import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.core.OrderComparator;
+import org.springframework.core.annotation.Order;
 
 import java.util.List;
 
@@ -29,4 +30,7 @@ public interface OrderMapper {
 
     @Select("select count(id) from orders where status = #{status}")
     Integer queryByStatus(Integer Status);
+
+    @Select("select * from orders")
+    List<Orders> queryAll();
 }

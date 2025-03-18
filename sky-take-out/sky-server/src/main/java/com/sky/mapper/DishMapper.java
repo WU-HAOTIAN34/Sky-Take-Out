@@ -36,4 +36,9 @@ public interface DishMapper {
 
     @Select("select d.*, c.name as categoryName from dish d left join category c on d.category_id = c.id where d.category_id = #{id} and d.status = 1")
     List<DishVO> queryByCategoryId(Long id);
+
+    @Select("select count(1) from dish where status = #{status}")
+    Integer queryCountByStatus(Integer status);
+
+
 }

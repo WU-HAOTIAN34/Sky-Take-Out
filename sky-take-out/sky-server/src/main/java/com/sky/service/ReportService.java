@@ -5,6 +5,7 @@ import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 
@@ -19,5 +20,5 @@ public interface ReportService {
 
     SalesTop10ReportVO saleReport(LocalDate begin, LocalDate end);
 
-
+    void export(HttpServletResponse httpServletResponse);
 }

@@ -40,4 +40,8 @@ public interface SetMealMapper {
             "where sd.setmeal_id = #{setmealId}")
     List<DishItemVO> getDishItemBySetmealId(Long setmealId);
 
+
+    @Select("select count(1) from setmeal where status = #{status}")
+    Integer queryCountByStatus(Integer status);
+
 }

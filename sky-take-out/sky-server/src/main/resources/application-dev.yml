@@ -1,0 +1,31 @@
+sky:
+  datasource:
+    driver-class-name: 
+    host: 
+    port: 
+    database: 
+    username: 
+    password: 
+
+  alioss:
+    access-key-id: 
+    access-key-secret: 
+    bucket-name: 
+    endpoint: 
+
+  redis:
+    port: 
+    password: 
+    host: 
+    database: 
+
+  wechat:
+    appid: 
+    secret: 
+    refund-notify-url: 
+    we-chat-pay-cert-file-path: 
+    private-key-file-path: 
+    notify-url: 
+    mchid: 
+    mch-serial-no: 
+    api-v3-key: 
